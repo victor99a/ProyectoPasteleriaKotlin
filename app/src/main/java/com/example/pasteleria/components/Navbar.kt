@@ -3,6 +3,8 @@ package com.example.pasteleria.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -46,14 +48,13 @@ fun Navbar(
             actions()
             var expanded by remember { mutableStateOf(false) }
             Box {
-                Text(
-                    text = "Menú",
-                    modifier = Modifier
-                        .clickable { expanded = true }
-                        .padding(8.dp),
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    fontWeight = FontWeight.SemiBold
-                )
+                IconButton(onClick = { expanded = true }) {
+                    Icon(
+                        Icons.Default.Menu,
+                        contentDescription = "Menú",
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
                 DropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
@@ -73,7 +74,7 @@ fun Navbar(
                         }
                     )
                     DropdownMenuItem(
-                        text = { Text("Carro") },
+                        text = { Text("Carrito") },
                         onClick = {
                             navController.navigate(Screen.Cart.route)
                             expanded = false

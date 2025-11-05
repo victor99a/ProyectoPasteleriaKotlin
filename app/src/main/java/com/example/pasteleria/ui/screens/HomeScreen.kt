@@ -16,11 +16,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,12 +35,14 @@ import coil.compose.AsyncImage
 import com.example.pasteleria.components.Navbar
 import com.example.pasteleria.data.models.Product
 import com.example.pasteleria.viewmodel.ProductsViewModel
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     productsVm: ProductsViewModel,
     onProductClick: (Int) -> Unit,
+    onAddToCart: (Product) -> Unit,
     navController: NavController
 ) {
     val products = productsVm.products.collectAsState()
@@ -50,7 +54,11 @@ fun HomeScreen(
                 navController = navController,
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                        Icon(
+                            Icons.Default.ArrowBack, 
+                            contentDescription = "Volver",
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
                     }
                 }
             )
@@ -60,40 +68,46 @@ fun HomeScreen(
             if (loading.value) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             } else {
-                ProductList(items = products.value, onClick = { onProductClick(it.id) })
+                ProductList(items = products.value, onClick = { onProductClick(it.id) }, onAddToCart = onAddToCart)
             }
         }
     }
 }
 
 @Composable
-fun ProductList(items: List<Product>, onClick: (Product) -> Unit) {
+fun ProductList(items: List<Product>, onClick: (Product) -> Unit, onAddToCart: (Product) -> Unit) {
     LazyColumn(modifier = Modifier.fillMaxSize().padding(8.dp)) {
         items(items) { p ->
-            ProductRow(product = p, onClick = onClick)
+            ProductRow(product = p, onClick = onClick, onAddToCart = onAddToCart)
         }
     }
 }
 
 @Composable
-fun ProductRow(product: Product, onClick: (Product) -> Unit) {
+fun ProductRow(product: Product, onClick: (Product) -> Unit, onAddToCart: (Product) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick(product) }
             .padding(12.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        AsyncImage(
-            model = product.imageUrl,
-            contentDescription = product.name,
-            modifier = Modifier.size(64.dp)
-        )
-        Spacer(Modifier.width(12.dp))
-        Column {
-            Text(product.name)
-            Spacer(Modifier.height(4.dp))
-            Text("Precio: $${String.format("%.2f", product.price)}")
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            AsyncImage(
+                model = product.imageUrl,
+                contentDescription = product.name,
+                modifier = Modifier.size(64.dp)
+            )
+            Spacer(Modifier.width(12.dp))
+            Column {
+                Text(product.name)
+                Spacer(Modifier.height(4.dp))
+                Text("Precio: $${String.format(Locale.GERMAN, "%,d", product.price.toLong())}")
+            }
+        }
+        IconButton(onClick = { onAddToCart(product) }) {
+            Icon(Icons.Default.ShoppingCart, contentDescription = "Agregar al carrito")
         }
     }
 }

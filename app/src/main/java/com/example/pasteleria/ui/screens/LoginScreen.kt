@@ -5,8 +5,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -18,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.pasteleria.components.Navbar
 import com.example.pasteleria.ui.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,7 +32,22 @@ fun LoginScreen(navController: NavController, onRegistered: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var pass by remember { mutableStateOf("") }
 
-    Scaffold {
+    Scaffold(
+        topBar = {
+            Navbar(
+                navController = navController,
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = "Volver",
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                }
+            )
+        }
+    ) {
         Column(modifier = Modifier.padding(it).padding(16.dp)) {
             Text("Iniciar sesión")
             Spacer(Modifier.height(8.dp))
@@ -47,8 +68,6 @@ fun LoginScreen(navController: NavController, onRegistered: () -> Unit) {
             Button(onClick = onRegistered, modifier = Modifier.fillMaxWidth()) { Text("Entrar (demo)") }
             Spacer(Modifier.height(8.dp))
             Button(onClick = { navController.navigate(Screen.Register.route) }, modifier = Modifier.fillMaxWidth()) { Text("Registrar Usuario") }
-            Spacer(Modifier.height(8.dp))
-            Button(onClick = { navController.popBackStack() }, modifier = Modifier.fillMaxWidth()) { Text("Volver") }
         }
     }
 }

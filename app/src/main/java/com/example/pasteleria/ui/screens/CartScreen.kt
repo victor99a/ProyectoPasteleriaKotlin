@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.pasteleria.components.Navbar
 import com.example.pasteleria.viewmodel.CartViewModel
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,12 +54,12 @@ fun CartScreen(cartVm: CartViewModel, navController: NavController) {
                     items(items.value) { it ->
                         Row(modifier = Modifier.fillMaxWidth().padding(8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
                             Text("${it.product.name} x${it.qty}")
-                            Text("$${"%.2f".format(it.product.price * it.qty)}")
+                            Text("$${String.format(Locale.GERMAN, "%,d", (it.product.price * it.qty).toLong())}")
                         }
                     }
                 }
                 Spacer(Modifier.height(12.dp))
-                Text("Total: $${"%.2f".format(cartVm.total())}")
+                Text("Total: $${String.format(Locale.GERMAN, "%,d", cartVm.total().toLong())}")
                 Spacer(Modifier.height(12.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),

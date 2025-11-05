@@ -31,6 +31,7 @@ fun AppNavHost(navController: androidx.navigation.NavHostController? = null) {
             HomeScreen(
                 productsVm = productsVm,
                 onProductClick = { id -> nc.navigate(Screen.ProductDetail.createRoute(id)) },
+                onAddToCart = { product -> cartVm.add(product) },
                 navController = nc
             )
         }
@@ -44,7 +45,7 @@ fun AppNavHost(navController: androidx.navigation.NavHostController? = null) {
                 productId = id,
                 productsVm = productsVm,
                 onAddToCart = { product -> cartVm.add(product) },
-                onBack = { nc.popBackStack() }
+                navController = nc
             )
         }
 

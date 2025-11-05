@@ -13,17 +13,20 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.pasteleria.components.Navbar
 import com.example.pasteleria.data.models.Product
 import com.example.pasteleria.viewmodel.ProductsViewModel
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,7 +34,7 @@ fun ProductDetailScreen(
     productId: Int,
     productsVm: ProductsViewModel,
     onAddToCart: (Product) -> Unit,
-    onBack: () -> Unit
+    navController: NavController
 ) {
     // Observe the full list of products and find the one with the matching ID
     val products by productsVm.products.collectAsState()
@@ -39,11 +42,15 @@ fun ProductDetailScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(product?.name ?: "Detalle del Producto") },
+            Navbar(
+                navController = navController,
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Volver")
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = "Volver",
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
                     }
                 }
             )
@@ -59,7 +66,7 @@ fun ProductDetailScreen(
                 Spacer(Modifier.height(12.dp))
                 Text(p.description)
                 Spacer(Modifier.height(12.dp))
-                Text("Precio: $${String.format("%.2f", p.price)}")
+                Text("Precio: $${String.format(Locale.GERMAN, "%,d", p.price.toLong())}")
                 Spacer(Modifier.height(16.dp))
                 Button(onClick = { onAddToCart(p) }) { Text("Agregar al carrito") }
             }
